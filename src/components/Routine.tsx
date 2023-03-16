@@ -76,7 +76,7 @@ const RoutineWrapper = styled.View<{nightMode?: boolean}>`
   padding: 10px 12px;
   border-radius: 12px;
   justify-content: space-between;
-  min-height: 99.8px;
+  min-height: 102.8px;
   background-color: ${({nightMode}: {nightMode: boolean}) =>
     nightMode ? '#103C58' : '#CFE4FF'};
 `;
@@ -91,6 +91,7 @@ const TextContainer = styled.View``;
 const RoutineHeaderText = styled.Text<{nightMode?: boolean}>`
   font-size: 16px;
   font-weight: 400;
+  line-height: 24px;
   color: ${({nightMode}: {nightMode: boolean}) =>
     nightMode ? 'white' : 'black'};
 `;

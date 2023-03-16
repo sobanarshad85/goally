@@ -29,7 +29,7 @@ function Routines(): JSX.Element {
       <Routine
         title="Night Routine"
         icon={require('../../assets/moon.png')}
-        iconStyle={{height: 41.62, width: 28.9}}
+        iconStyle={{height: 47.62, width: 28.9}}
         days="Everyday"
         time="9:00 PM"
         flagValue={nightRoutineFlag}
