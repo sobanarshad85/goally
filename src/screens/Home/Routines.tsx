@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View} from 'react-native';
 import Routine from '../../components/Routine';
 import styled from 'styled-components/native';
@@ -13,6 +13,8 @@ const RoutinesContainer = styled(View)`
 `;
 
 function Routines(): JSX.Element {
+  const [morningRoutineFlag, setMorningRoutineFlag] = useState<boolean>(true);
+  const [nightRoutineFlag, setNightRoutineFlag] = useState<boolean>(false);
   return (
     <RoutinesContainer>
       <Routine
@@ -21,6 +23,8 @@ function Routines(): JSX.Element {
         iconStyle={{height: 55.88, width: 63}}
         days="Weekdays"
         time="7:00 AM"
+        flagValue={morningRoutineFlag}
+        setFlagValue={setMorningRoutineFlag}
       />
       <Routine
         title="Night Routine"
@@ -28,6 +32,8 @@ function Routines(): JSX.Element {
         iconStyle={{height: 41.62, width: 28.9}}
         days="Everyday"
         time="9:00 PM"
+        flagValue={nightRoutineFlag}
+        setFlagValue={setNightRoutineFlag}
         nightMode
       />
     </RoutinesContainer>

@@ -15,6 +15,8 @@ interface RoutineProps {
   iconStyle: ImageStyle;
   title: string;
   nightMode?: boolean;
+  flagValue: boolean;
+  setFlagValue: (flagValue: boolean) => void;
   days: string;
   time: string;
 }
@@ -26,6 +28,8 @@ function Routine({
   nightMode,
   days,
   time,
+  flagValue,
+  setFlagValue,
 }: RoutineProps): JSX.Element {
   return (
     <Container>
@@ -39,7 +43,12 @@ function Routine({
           <Icon source={icon} style={iconStyle} />
         </RoutineHeader>
         <RoutineFooter>
-          <Switch />
+          <Switch
+            onValueChange={setFlagValue}
+            value={flagValue}
+            trackColor={{false: '#72777F', true: '#72CEBC'}}
+            ios_backgroundColor="#72777F"
+          />
           <Entypo
             name="chevron-right"
             size={24}
@@ -64,10 +73,10 @@ const Title = styled.Text`
 const RoutineWrapper = styled.View<{nightMode?: boolean}>`
   margin-top: 5px;
   flex-direction: column;
-  padding: 12px;
+  padding: 10px 12px;
   border-radius: 12px;
   justify-content: space-between;
-  min-height: 103.7px;
+  min-height: 99.8px;
   background-color: ${({nightMode}: {nightMode: boolean}) =>
     nightMode ? '#103C58' : '#CFE4FF'};
 `;
