@@ -8,6 +8,7 @@ import {
   ImageStyle,
 } from 'react-native';
 import styled from 'styled-components/native';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 interface RoutineProps {
   icon: ImageURISource;
@@ -39,7 +40,11 @@ function Routine({
         </RoutineHeader>
         <RoutineFooter>
           <Switch />
-          <RightIcon source={require('../assets/right-black.png')} />
+          <Entypo
+            name="chevron-right"
+            size={24}
+            color={nightMode ? 'white' : 'black'}
+          />
         </RoutineFooter>
       </RoutineWrapper>
     </Container>
