@@ -43,15 +43,19 @@ const SortIcon = styled.Image`
 const Search = ({
   isDataAscending,
   setIsDataAscending,
+  setText,
+  text,
 }: {
   isDataAscending: boolean;
   setIsDataAscending: (isDataAscending: boolean) => void;
+  setText: (text: string) => void;
+  text: string;
 }): JSX.Element => {
   const toggleSorting = () => setIsDataAscending(!isDataAscending);
   return (
     <Container>
       <InputContainer>
-        <Input />
+        <Input value={text} onChangeText={setText} />
         <SearchButton>
           <Icon name="search" size={20} />
         </SearchButton>

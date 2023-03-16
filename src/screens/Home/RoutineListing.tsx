@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {
   Text,
   Image,
@@ -24,6 +24,7 @@ const RoutineListing = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [text, setText] = useState<string>('');
 
   const getData = (refresh: boolean = false) => {
     setIsLoading(true);
@@ -47,10 +48,12 @@ const RoutineListing = (): JSX.Element => {
           setData([...data, ...result?.docs]);
         }
         setPageNumber(result?.nextPage);
+      })
+      .catch(error => console.log('error', error)) // handle error scenarios
+      .finally(() => {
         setIsLoading(false);
         setRefreshing(false);
-      })
-      .catch(error => console.log('error', error));
+      });
   };
 
   useEffect(() => {
@@ -58,14 +61,28 @@ const RoutineListing = (): JSX.Element => {
   }, []);
 
   useEffect(() => {
+    const sortedData = [...data];
     if (isDataAscending) {
-      data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      sortedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
     } else {
-      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      sortedData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
+    setData(sortedData);
   }, [isDataAscending]);
 
+  const filteredArray = useMemo(() => {
+    if (text) {
+      return data.filter(obj =>
+        obj.name.toLowerCase().includes(text.toLowerCase()),
+      );
+    }
+    return data;
+  }, [data, text]);
+
   const getItemCount = () => {
+    if (text) {
+      return filteredArray.length;
+    }
     return data?.length || 0;
   };
 
@@ -106,9 +123,11 @@ const RoutineListing = (): JSX.Element => {
       <Search
         isDataAscending={isDataAscending}
         setIsDataAscending={setIsDataAscending}
+        setText={setText}
+        text={text}
       />
       <VirtualizedList
-        data={data}
+        data={filteredArray}
         getItemCount={getItemCount}
         getItem={getItem}
         renderItem={item => (
@@ -121,7 +140,7 @@ const RoutineListing = (): JSX.Element => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         keyExtractor={keyExtractor}
-        onEndReached={onEndReached}
+        onEndReached={text ? null : onEndReached}
         onEndReachedThreshold={0.01}
         ListFooterComponent={renderFooter}
         contentContainerStyle={{flexGrow: 1}}
