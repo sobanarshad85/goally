@@ -7,6 +7,7 @@ import RoutineListing from './RoutineListing';
 
 const HomeContainer = styled.View`
   background-color: white;
+  flex: 1;
 `;
 
 function Home(): JSX.Element {
