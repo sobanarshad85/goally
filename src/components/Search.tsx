@@ -1,5 +1,5 @@
 import React from 'react';
-import {View} from 'react-native';
+import {TouchableOpacity, View, TextInput} from 'react-native';
 import styled from 'styled-components/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -23,7 +23,7 @@ const Input = styled.TextInput`
   padding-horizontal: 10px;
 `;
 
-const Button = styled.View`
+const SearchButton = styled.TouchableOpacity`
   width: 42px;
   background-color: #49b0ab;
   justify-content: center;
@@ -40,18 +40,27 @@ const SortIcon = styled.Image`
   margin-left: 10px;
 `;
 
-function Search(): JSX.Element {
+const Search = ({
+  isDataAscending,
+  setIsDataAscending,
+}: {
+  isDataAscending: boolean;
+  setIsDataAscending: (isDataAscending: boolean) => void;
+}): JSX.Element => {
+  const toggleSorting = () => setIsDataAscending(!isDataAscending);
   return (
     <Container>
       <InputContainer>
         <Input />
-        <Button>
+        <SearchButton>
           <Icon name="search" size={20} />
-        </Button>
+        </SearchButton>
       </InputContainer>
-      <SortIcon source={require('../assets/sort.png')} />
+      <TouchableOpacity onPress={toggleSorting}>
+        <SortIcon source={require('../assets/sort.png')} />
+      </TouchableOpacity>
     </Container>
   );
-}
+};
 
 export default Search;

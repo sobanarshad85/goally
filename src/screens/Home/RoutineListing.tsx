@@ -9,19 +9,17 @@ import {
   RefreshControl,
 } from 'react-native';
 import styled from 'styled-components/native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Search from '../../components/Search';
-import Entypo from 'react-native-vector-icons/Entypo';
 import RoutineListItem from '../../components/RoutineListItem';
 import axios from 'axios';
-axios.defaults.baseURL = 'https://devapi.getgoally.com/v1/api/';
 
 const Container = styled.View`
   padding: 10px 10px 0px 10px;
   flex: 1;
 `;
 
-function RoutineListing(): JSX.Element {
+const RoutineListing = (): JSX.Element => {
+  const [isDataAscending, setIsDataAscending] = useState<boolean>(false);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -58,6 +56,14 @@ function RoutineListing(): JSX.Element {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    if (isDataAscending) {
+      data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    } else {
+      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+  }, [isDataAscending]);
 
   const getItemCount = () => {
     return data?.length || 0;
@@ -97,7 +103,10 @@ function RoutineListing(): JSX.Element {
 
   return (
     <Container>
-      <Search />
+      <Search
+        isDataAscending={isDataAscending}
+        setIsDataAscending={setIsDataAscending}
+      />
       <VirtualizedList
         data={data}
         getItemCount={getItemCount}
@@ -119,6 +128,6 @@ function RoutineListing(): JSX.Element {
       />
     </Container>
   );
-}
+};
 
 export default RoutineListing;

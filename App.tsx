@@ -1,6 +1,8 @@
 import React from 'react';
 import {SafeAreaView, StatusBar} from 'react-native';
 import styled from 'styled-components/native';
+import axios from 'axios';
+axios.defaults.baseURL = 'https://devapi.getgoally.com/v1/api/';
 
 import Home from './src/screens/Home';
 
