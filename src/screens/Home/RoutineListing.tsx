@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   Image,
@@ -13,9 +13,11 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Search from '../../components/Search';
 import Entypo from 'react-native-vector-icons/Entypo';
 import RoutineListItem from '../../components/RoutineListItem';
+import axios from 'axios';
+axios.defaults.baseURL = 'https://devapi.getgoally.com/v1/api/';
 
 const Container = styled.View`
-  padding: 10px;
+  padding: 10px 10px 0px 10px;
   flex: 1;
 `;
 
@@ -27,25 +29,20 @@ function RoutineListing(): JSX.Element {
 
   const getData = (refresh: boolean = false) => {
     setIsLoading(true);
-    var myHeaders = new Headers();
-    myHeaders.append(
-      'Authorization',
-      'ddc58e6a-2e69-4f44-97e8-1454eb352069'
-    );
-
-    var requestOptions = {
-      method: 'GET',
-      headers: myHeaders,
-      redirect: 'follow',
+    const config = {
+      headers: {
+        Authorization: 'ddc58e6a-2e69-4f44-97e8-1454eb352069',
+      },
     };
-    fetch(
-      `https://devapi.getgoally.com/v1/api/reminders/all?limit=10&page=${
-        pageNumber && !refresh ? pageNumber : 1
-      }`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => {
+    axios
+      .get(
+        `reminders/all?limit=10&page=${
+          pageNumber && !refresh ? pageNumber : 1
+        }`,
+        config,
+      )
+      .then(response => {
+        const result = response.data;
         if (refresh) {
           setData(result?.docs);
         } else {
@@ -55,7 +52,7 @@ function RoutineListing(): JSX.Element {
         setIsLoading(false);
         setRefreshing(false);
       })
-      .catch((error) => console.log('error', error));
+      .catch(error => console.log('error', error));
   };
 
   useEffect(() => {
@@ -90,7 +87,7 @@ function RoutineListing(): JSX.Element {
   const renderFooter = () => {
     if (isLoading) {
       return (
-        <View style={{ paddingVertical: 20 }}>
+        <View style={{paddingVertical: 20}}>
           <ActivityIndicator animating size="large" />
         </View>
       );
@@ -105,7 +102,7 @@ function RoutineListing(): JSX.Element {
         data={data}
         getItemCount={getItemCount}
         getItem={getItem}
-        renderItem={(item) => (
+        renderItem={item => (
           <RoutineListItem
             title={item.item?.name}
             image={item.item?.visualAidUrl}
@@ -118,7 +115,7 @@ function RoutineListing(): JSX.Element {
         onEndReached={onEndReached}
         onEndReachedThreshold={0.01}
         ListFooterComponent={renderFooter}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{flexGrow: 1}}
       />
     </Container>
   );
