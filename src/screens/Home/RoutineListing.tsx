@@ -15,9 +15,16 @@ const Container = styled.View`
   flex: 1;
 `;
 
+type Doc = {
+  _id: string;
+  name: string;
+  visualAidUrl?: string;
+  createdAt: string;
+};
+
 const RoutineListing = (): JSX.Element => {
   const [isDataAscending, setIsDataAscending] = useState<boolean>(false);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Doc[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -44,7 +51,7 @@ const RoutineListing = (): JSX.Element => {
     setData(sortedData);
   }, [isDataAscending]);
 
-  const filteredArray = useMemo(() => {
+  const filteredArray: Doc[] = useMemo(() => {
     if (text) {
       return data.filter(obj =>
         obj.name.toLowerCase().includes(text.toLowerCase()),
@@ -92,7 +99,7 @@ const RoutineListing = (): JSX.Element => {
     return null;
   };
 
-  const deleteItem = id => {
+  const deleteItem = (id: string) => {
     const updatedItems = [...data].filter(item => item._id !== id);
     setData(updatedItems);
   };
