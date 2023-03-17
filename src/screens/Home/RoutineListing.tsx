@@ -1,9 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {
-  Text,
-  Image,
   View,
-  TextInput,
   VirtualizedList,
   ActivityIndicator,
   RefreshControl,
@@ -11,7 +8,7 @@ import {
 import styled from 'styled-components/native';
 import Search from '../../components/Search';
 import RoutineListItem from '../../components/RoutineListItem';
-import axios from 'axios';
+import {getData, getItemCount, keyExtractor, getItem} from './Controller';
 
 const Container = styled.View`
   padding: 10px 10px 0px 10px;
@@ -26,38 +23,15 @@ const RoutineListing = (): JSX.Element => {
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [text, setText] = useState<string>('');
 
-  const getData = (refresh: boolean = false) => {
-    setIsLoading(true);
-    const config = {
-      headers: {
-        Authorization: 'ddc58e6a-2e69-4f44-97e8-1454eb352069',
-      },
-    };
-    axios
-      .get(
-        `reminders/all?limit=10&page=${
-          pageNumber && !refresh ? pageNumber : 1
-        }`,
-        config,
-      )
-      .then(response => {
-        const result = response.data;
-        if (refresh) {
-          setData(result?.docs);
-        } else {
-          setData([...data, ...result?.docs]);
-        }
-        setPageNumber(result?.nextPage);
-      })
-      .catch(error => console.log('error', error)) // handle error scenarios
-      .finally(() => {
-        setIsLoading(false);
-        setRefreshing(false);
-      });
-  };
-
   useEffect(() => {
-    getData();
+    getData(
+      setIsLoading,
+      pageNumber,
+      setData,
+      setPageNumber,
+      setRefreshing,
+      data,
+    );
   }, []);
 
   useEffect(() => {
@@ -79,31 +53,31 @@ const RoutineListing = (): JSX.Element => {
     return data;
   }, [data, text]);
 
-  const getItemCount = () => {
-    if (text) {
-      return filteredArray.length;
-    }
-    return data?.length || 0;
-  };
-
-  const keyExtractor = (item, index) => {
-    return item?._id;
-  };
-
-  const getItem = (item, index) => {
-    return item[index];
-  };
-
   const onRefresh = () => {
     setPageNumber(1);
-    getData(true);
+    getData(
+      setIsLoading,
+      pageNumber,
+      setData,
+      setPageNumber,
+      setRefreshing,
+      data,
+      true,
+    );
     setRefreshing(true);
   };
 
   const onEndReached = () => {
     if (!isLoading) {
       setIsLoading(true);
-      getData();
+      getData(
+        setIsLoading,
+        pageNumber,
+        setData,
+        setPageNumber,
+        setRefreshing,
+        data,
+      );
     }
   };
 
@@ -118,6 +92,11 @@ const RoutineListing = (): JSX.Element => {
     return null;
   };
 
+  const deleteItem = id => {
+    const updatedItems = [...data].filter(item => item._id !== id);
+    setData(updatedItems);
+  };
+
   return (
     <Container>
       <Search
@@ -128,12 +107,14 @@ const RoutineListing = (): JSX.Element => {
       />
       <VirtualizedList
         data={filteredArray}
-        getItemCount={getItemCount}
+        getItemCount={() => getItemCount(text, filteredArray, data)}
         getItem={getItem}
         renderItem={item => (
           <RoutineListItem
             title={item.item?.name}
             image={item.item?.visualAidUrl}
+            _id={item.item?._id}
+            deleteItem={deleteItem}
           />
         )}
         refreshControl={
